@@ -34,7 +34,7 @@ export default (props)=>{
             {optional}
             <br/>
             <button  disabled={props.disabled }> Pay </button> <button type='reset' onClick={props.reset}> Reset </button>
-            <h3>{props.error}</h3>
+            <h3 style={{color:'red'}}>{props.error}</h3>
         </form>
       </div>
     )
