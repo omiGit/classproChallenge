@@ -27,7 +27,7 @@ class App extends Component {
 checkOptional = e=>{
   let optionalAmount = this.state.optionalAmount;
   const installments = [...this.state.installments];
-  console.log(this.noOfInst);
+ 
   //const actuallInstallment = (installments.length && installments[installments.length-this.state.noOfInst] ) || this.instAmount;
  const actuallInstallment = (installments.length && installments[this.noOfInst] ) || this.installmentAmount ;
  if(this.state.amount !== installments[this.noOfInst]){ optionalAmount = this.state.amount - actuallInstallment + optionalAmount;}
@@ -36,8 +36,7 @@ checkOptional = e=>{
 
 getNoOfInst = e=>{
   const noOfInst = +e.target.value;
-  console.log(noOfInst);
-  console.log(noOfInst);
+ 
   let disabled = true
   if(this.state.totalAmount){
     disabled = false;
@@ -60,7 +59,7 @@ getNoOfInst = e=>{
 
 getTotlaAmount= e=>{
   const totalAmount = +e.target.value;
-  console.log(totalAmount);
+ 
   if(!isNaN(totalAmount)){
     let disabled = true
   if(this.state.noOfInst){
@@ -107,7 +106,7 @@ pay = (e)=>{
       this.installmentAmount = this.state.totalAmount / this.state.noOfInst;
       let installments = this.state.installments.length ? this.state.installments:new Array(this.state.noOfInst).fill(this.installmentAmount);
      
-      console.log(this.installmentAmount);
+  
 
    if(!this.state.amount && this.state.installments.length > 0){
 
@@ -116,9 +115,7 @@ pay = (e)=>{
    }else if(this.state.amount === this.state.totalAmount){
       this.setState({installments : 'You Have Paid Full Fee Amount'});
    }
-   else if(this.state.amount > installments[this.noOfInst] && !this.state.optional && this.state.amount > this.state.noOfInst){
-      this.setState({msg:'This Amount is greater than minimum required installment',disabled:true});
-    }
+
     else if(this.state.amount < installments[this.noOfInst] && this.state.amount !== 0 && !this.state.optional && this.state.totalAmount > this.state.noOfInst){
       this.setState({msg:'This Amount is less than minimum required installment',disabled:true});
     }
@@ -127,37 +124,53 @@ pay = (e)=>{
       let  optionalAmount = this.state.optionalAmount;
       const optional = this.state.optional;
       if(this.state.noOfInst < this.state.totalAmount){
-      //const installmentAmount = this.state.totalAmount / this.state.noOfInst;
-      console.log(this.state.installments == true);
-      
-      console.log(installments);  
-      if(this.state.optional === 'nextInst'){
+     
+      if(this.state.optional === 'nextInst' || this.state.amount > installments[this.noOfInst] ){
+          if(this.state.amount > installments[this.noOfInst]){
+            const actuallInstallment = (installments.length && installments[this.noOfInst] ) || this.installmentAmount ;
+            if(this.state.amount !== installments[this.noOfInst]){ optionalAmount = this.state.amount - actuallInstallment + optionalAmount;}
+          }
         if(optionalAmount > this.state.totalAmount - this.state.amount){
-          // installments = [ this.state.amount, this.state.totalAmount - this.state.amount];
+          
+         
            installments[noOfInst] = this.state.amount;
-           const remainedInstallments = this.state.totalAmount - installments[noOfInst]
-           console.log(remainedInstallments,installments.slice(noOfInst+1));
+          
+           if((this.state.paid+this.state.amount) === this.state.totalAmount){
+            installments = installments.slice(0,noOfInst+1);
+           }
+           else{const remainedInstallments = this.state.totalAmount - installments[noOfInst]
+         
             let otherinstallments = installments.slice(noOfInst+1);
-            console.log(remainedInstallments, this.state.noOfInst-(noOfInst+1),Number((remainedInstallments / (this.state.noOfInst-(noOfInst+1))))); 
+         
             const instAmount = Number((remainedInstallments / (this.state.noOfInst-(noOfInst+1))).toFixed(2));
+      
             otherinstallments.fill(instAmount);
-           installments = [ installments[noOfInst],...otherinstallments]
+           installments = [ installments[noOfInst],...otherinstallments]}
+        
            optionalAmount=0;
          }else if(optionalAmount > 0){
          
             installments[noOfInst] = this.state.amount;
-            if(optionalAmount < this.state.totalAmount - this.state.amount){
+            if((optionalAmount < this.state.totalAmount - this.state.amount) && ((this.state.paid+this.state.amount) !== this.state.totalAmount)){
+          
             installments[noOfInst+1] -= optionalAmount
-            console.log(installments[noOfInst+1]);
-            if(installments[noOfInst+1] < 0){
-              const remainedInstallments =this.state.totalAmount - installments[noOfInst]
-             console.log(remainedInstallments,installments.slice(noOfInst+1));
+         
+            if(installments[noOfInst+1] < 0 ){
+             
+              if((this.state.paid+this.state.amount) !== this.state.totalAmount){
+              const remainedInstallments = this.state.totalAmount - installments[noOfInst]
+            
               let otherinstallments = installments.slice(noOfInst+1);
-              console.log(remainedInstallments, this.state.noOfInst-(noOfInst+1));
-              otherinstallments.fill((remainedInstallments / (this.state.noOfInst-(noOfInst+1))).toFixed(2));
+            
+              otherinstallments.fill(Number((remainedInstallments / (this.state.noOfInst-(noOfInst+1))).toFixed(2)));
              installments = [ installments[noOfInst],...otherinstallments]
+            }else{
+              installments[noOfInst + 1] = this.state.amount;
+              installments = installments.slice(0,noOfInst+1);
+         
             }
             }
+          }
             else{
               installments = installments.slice(0,noOfInst+1);
             }
@@ -168,32 +181,34 @@ pay = (e)=>{
           console.log(!installments[noOfInst+1], installments[noOfInst+1] + this.state.optionalAmount);
           //installments[noOfInst+1] = !installments[noOfInst+1]?Math.abs(this.state.optionalAmount):installments[noOfInst+1] + this.state.optionalAmount ;
           installments[noOfInst+1] = !installments[noOfInst+1]?Math.abs(this.state.optionalAmount):installments[noOfInst+1] + Math.abs(this.state.optionalAmount) ;
-      } 
-    }
+          optionalAmount = 0;
+        } 
+    }else if( this.state.optional === 'newInst'){
+              installments[this.noOfInst] = this.state.amount;
+              installments[installments.length] = -optionalAmount;
+          }
       
-        // if(optional){
-        //   noOfInst = this.state.noOfInst - 1;
-        // }
-        
-        this.setState(prevState=>({installments,paid:prevState.paid+this.state.amount,optional:false,optionalAmount,msg:'',amount:0})); 
+        let disabled = false;
+        if(this.state.paid+this.state.amount === this.state.totalAmount){
+            disabled= true;
+            this.amountRef.current.disabled = true;
+        }
+        installments = installments.map(a=>Math.round(a));
+        this.setState(prevState=>({installments,paid:prevState.paid+this.state.amount,optional:false,optionalAmount,msg:'',amount:0,disabled})); 
         this.amountRef.current.focus();
-        if(this.noOfInst < this.state.noOfInst){
+        if(this.noOfInst < this.state.noOfInst && this.state.amount){
         this.noOfInst +=1;
         if(this.noOfInst === this.state.noOfInst-1){
           this.setState({disabled:true});
          this.amountRef.current.disabled = true;
         }
         }
-       
-        
   }
   else{
-    console.log('asdfo');
     this.setState({error: "No of installments are greadter than actuall fee amount"});
     }
 }
 }
-
 reset = ()=>
   {this.amountRef.current.disabled = false; this.setState({
     totalAmount:0,
@@ -207,12 +222,9 @@ reset = ()=>
     optional:'',
     optionalAmount:0,
     installmentAmount:0
-});}
+});this.noOfInst=0;}
 
 render() {
-  console.log(this.state);
-  console.log(this.noOfInst);
- 
   return (
       <div className="App">
         <Form
