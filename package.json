@@ -2,14 +2,15 @@
   "name": "challenge_classpro",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://omigit.github.io",
+  "homepage": "https://omigit.github.io/classproChallenge/",
   "dependencies": {
+    "gh-pages": "^1.2.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-scripts": "1.1.4"
   },
   "scripts": {
-    "deploy":"gh-pages -d build",
+    "deploy": "gh-pages -d build",
     "predeploy": "npm run build",
     "start": "react-scripts start",
     "build": "react-scripts build",

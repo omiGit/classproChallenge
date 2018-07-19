@@ -9,9 +9,26 @@ export default (props)=>{
         
       <div>
         <form method='get' onSubmit={props.pay}>
-            <label>Amount to be paid :</label>
-            <input type="text" 
-            style={{marginLeft:'15px',padding:'5px'}}
+            <label> No Of installment : </label>
+            <input 
+            type = "text"
+            style = {{marginLeft:'15px',padding:'5px'}}
+            value = {props.noOfInst}
+            onChange = {props.getNoOfInst} 
+            />
+            <br/>
+            <label>Fee Amount :</label>
+            <input
+            type="text"
+            value={props.totalAmount}
+            onChange={props.getTotlaAmount}
+            style = {{marginLeft:'52px',padding:'5px'}}
+            /> 
+            <br/>
+            <label>installment Amount :</label>
+            <input 
+            type="text" 
+            style={{marginLeft:'8px',padding:'5px'}}
             value = {props.amount} ref={props.amountRef} onChange={props.getAmount} />
             <br/>
             {optional}
