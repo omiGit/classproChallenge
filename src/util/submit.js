@@ -1,5 +1,11 @@
+
+//Submit function which gets executed when form gets submitted
 export default function(e){
+    
+    //Prevent default action taken by 'onsubmit' event
     e.preventDefault();
+
+    //All neccessary variables and constants
     let  noOfInst = this.noOfInst;
     let  totalAmount = this.state.totalAmount
     const stateNoInst = this.state.noOfInst
@@ -9,20 +15,32 @@ export default function(e){
     let installments = this.state.installments.length ? this.state.installments:new Array(stateNoInst).fill(this.installmentAmount);
     let disabled = false;
 
+   //To force user to type only number (data) not any alphabates
+   //and don't press any other key except numeric key 
   if(!amount && this.state.installments.length > 0){
   this.setState({error : 'Please Enter Installment Amount'});
  }else if(amount === totalAmount){
     this.setState({installments : 'You Have Paid Full Fee Amount',disabled:true});
     this.amountRef.current.disabled = true;
  }
+ 
+ //Ask user to choose the options between 'Add to next' or 'Create new installment'
+ //if he enters amount less than acutall required amount 
  else if(amount < installments[this.noOfInst] && amount !== 0 && !optional && totalAmount > stateNoInst){
     this.setState({msg:'This Amount is less than minimum required installment',disabled:true});
   }
+  //If user enters the installment amount as required amount
+  //or greeter than required amount then proceed 
   else{
     let  optionalAmount = this.state.optionalAmount;
-    console.log(optionalAmount);
     const optional = this.state.optional;
+
+    //Check if student enters the 'No of Installment' value 
+    //greater than actual 'Fee Amount'
     if(stateNoInst < totalAmount){
+        
+        //If the student is paying more than the installment amount, 
+        //then deducte the the excess amount from the next installment(s).
     if(optional === 'nextInst' || amount > installments[this.noOfInst] ){
         if(this.state.amount > installments[this.noOfInst]){
           optionalAmount = this.getOptionalAmount();
@@ -63,7 +81,10 @@ export default function(e){
         installments[noOfInst+1] = !installments[noOfInst+1]?Math.abs(optionalAmount):installments[noOfInst+1] + Math.abs(optionalAmount) ;
         optionalAmount = 0;
       } 
-  }else if( optional === 'newInst'){
+  }
+  //If the student is paying less than the installment amount, 
+  //and asking for creating new installment.
+  else if( optional === 'newInst'){
             installments[this.noOfInst] = amount;
             installments[installments.length] = -optionalAmount;
         }

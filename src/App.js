@@ -6,7 +6,6 @@ import submit from './util/submit';
 
 
 //Main Controller Class
-
 class App extends Component {
   constructor(){
     super();
